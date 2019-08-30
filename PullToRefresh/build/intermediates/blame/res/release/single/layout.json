@@ -1,0 +1,10 @@
+[
+    {
+        "merged": "E:\\Projects\\AndroidProjects\\WhatsOnNews\\PullToRefresh\\build\\intermediates\\res\\merged\\release\\layout\\pull_to_refresh_header_horizontal.xml",
+        "source": "E:\\Projects\\AndroidProjects\\WhatsOnNews\\PullToRefresh\\src\\main\\res\\layout\\pull_to_refresh_header_horizontal.xml"
+    },
+    {
+        "merged": "E:\\Projects\\AndroidProjects\\WhatsOnNews\\PullToRefresh\\build\\intermediates\\res\\merged\\release\\layout\\pull_to_refresh_header_vertical.xml",
+        "source": "E:\\Projects\\AndroidProjects\\WhatsOnNews\\PullToRefresh\\src\\main\\res\\layout\\pull_to_refresh_header_vertical.xml"
+    }
+]

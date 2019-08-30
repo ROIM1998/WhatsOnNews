@@ -1,0 +1,14 @@
+[
+    {
+        "merged": "E:\\Projects\\AndroidProjects\\WhatsOnNews\\PullToRefresh\\build\\intermediates\\res\\merged\\release\\drawable-xhdpi-v4\\default_ptr_rotate.png",
+        "source": "E:\\Projects\\AndroidProjects\\WhatsOnNews\\PullToRefresh\\src\\main\\res\\drawable-xhdpi\\default_ptr_rotate.png"
+    },
+    {
+        "merged": "E:\\Projects\\AndroidProjects\\WhatsOnNews\\PullToRefresh\\build\\intermediates\\res\\merged\\release\\drawable-xhdpi-v4\\indicator_arrow.png",
+        "source": "E:\\Projects\\AndroidProjects\\WhatsOnNews\\PullToRefresh\\src\\main\\res\\drawable-xhdpi\\indicator_arrow.png"
+    },
+    {
+        "merged": "E:\\Projects\\AndroidProjects\\WhatsOnNews\\PullToRefresh\\build\\intermediates\\res\\merged\\release\\drawable-xhdpi-v4\\default_ptr_flip.png",
+        "source": "E:\\Projects\\AndroidProjects\\WhatsOnNews\\PullToRefresh\\src\\main\\res\\drawable-xhdpi\\default_ptr_flip.png"
+    }
+]
