@@ -22,23 +22,10 @@ public class NewsDetail extends Activity{
         String[] imagePath=imagePathAll.split(";");
         TextView tvTitle=(TextView)findViewById(R.id.news_detail_title);
         TextView tvCategory=(TextView)findViewById(R.id.news_detail_category);
-        TextView tvContent=(TextView)findViewById(R.id.news_detail_content);
-        tvTitle.setText(title);
-        tvCategory.setText(category);
-        tvContent.setText(content);
-        if(imagePath.length!=0){
-            ImageView imageView=new ImageView(this);
-            System.out.println("添加View: "+imageView.toString());
-            //imageView.setLayoutParams(new LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT));
-            //new LoadImageTask(imageView).execute(imagePath[0]);
-            imageView.setImageResource(R.drawable.orange_main);
-            linearLayout.addView(imageView);
-        }
-        else{
-            TextView textView=new TextView(this);
-            //textView.setLayoutParams(new LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT));
-            textView.setText("没有图片！");
-            linearLayout.addView(textView);
-        }
+        content.replaceAll("\u3000"," ");
+        String[] contentLines=content.split("\n");
+
+
+
     }
 }
