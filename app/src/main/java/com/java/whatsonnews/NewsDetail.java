@@ -65,7 +65,7 @@ public class NewsDetail extends Activity{
         tvTitle.setText(title);
         tvCategory.setText(category);
 
-        content.replaceAll("\u3000"," ");
+        //content.replaceAll("\u3000"," ");
         String[] contentLines=content.split("\n");
         list_words=(LinearLayout) findViewById(R.id.news_detail);
         words=new LinkedList<String>();

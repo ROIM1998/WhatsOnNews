@@ -9,4 +9,6 @@
     <string name="menu_contact">推荐</string>
     <string name="menu_find">视频</string>
     <string name="menu_me">我的设置</string>
+    <item name="tag_small_image" type="id"></item>
+    <item name="tag_no_image" type="id"></item>
 </resources>

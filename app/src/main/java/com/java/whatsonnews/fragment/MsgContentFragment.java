@@ -19,6 +19,7 @@ import com.java.whatsonnews.NewsDetail;
 import com.java.whatsonnews.R;
 import com.java.whatsonnews.RequestNews;
 import com.java.whatsonnews.News;
+import com.java.whatsonnews.adapter.NewsPreviewAdapter;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -28,10 +29,12 @@ import com.alibaba.fastjson.JSONObject;
 import com.alibaba.fastjson.JSONArray;
 
 import java.io.Serializable;
+import java.util.LinkedList;
 import java.util.Map;
 import java.util.List;
 import java.util.ArrayList;
 import java.util.HashMap;
+
 
 import com.handmark.pulltorefresh.library.PullToRefreshListView;
 import com.handmark.pulltorefresh.library.PullToRefreshBase;
@@ -47,7 +50,7 @@ public class MsgContentFragment extends Fragment {
     PullToRefreshListView tvContent;
 
     private String name;
-
+    private NewsPreviewAdapter mAdapter;
     private RequestNews rn;
 
     private class FinishRefresh extends AsyncTask<Void, Void, Void>{
@@ -88,27 +91,21 @@ public class MsgContentFragment extends Fragment {
         newNews.save();
     }
 
-    private List<Map<String,Object>> loadNewsOnline(){
+    private LinkedList<News> loadNewsOnline(){
         String url="https://api2.newsminer.net/svc/news/queryNewsList?size=15&startDate=2019-07-29&endDate=2019-08-30";
         if(!name.equals("首页"))
             url+="&categories="+name;
         rn=new RequestNews(url);
         JSONArray newsArray=rn.getNewsArray();
-        List<Map<String,Object>> listItem=new ArrayList<Map<String, Object>>();
+        LinkedList<News> listItem=new LinkedList<>();
         System.out.println(newsArray.size());
         for(int i=0;i<Integer.min(10,newsArray.size());i++) {
             JSONObject tmp = (JSONObject) newsArray.get(i);
-            Map<String,Object> item=new HashMap<String,Object>();
-            item.put("title",tmp.getString("title"));
-            item.put("category",tmp.getString("category"));
-            String tmpContent=tmp.getString("content");
-            String tmpPreview=null;
-                        item.put("newsID",tmp.getString("newsID"));
-            if(tmpContent.length()<50)
-                tmpPreview=tmpContent;
-            else
-                tmpPreview=tmpContent.substring(0,50)+"...";
-            item.put("preview",tmpPreview);
+            News item=new News();
+            item.setTitle(tmp.getString("title"));
+            item.setCategory(tmp.getString("category"));
+            item.setContent(tmp.getString("content"));
+            item.setNewsID(tmp.getString("newsID"));
             String imageArray=tmp.getString("image");
             imageArray=imageArray.substring(1,imageArray.length()-1);
             imageArray=imageArray.replaceAll(" ","");
@@ -118,10 +115,7 @@ public class MsgContentFragment extends Fragment {
                 String imagePath=(String)imgArray[j];
                 imagePathAll+=imagePath+";";
             }
-            if(imagePathAll.length()==1)
-                tmpContent="【没有图片】"+tmpContent;
-            item.put("imagePath",imagePathAll);
-            item.put("content",tmpContent);
+            item.setImgPath(imagePathAll);
             listItem.add(item);
             tmp.put("imagePath",imagePathAll);
             //saveNewsInDatabase(tmp); 网络运行调试中不进行本地保存，以防磁盘占用
@@ -129,8 +123,7 @@ public class MsgContentFragment extends Fragment {
         return listItem;
     }
 
-    private List<Map<String,Object>> loadNewsOffline(){
-        List<Map<String,Object>> listItem=new ArrayList<>();
+    private LinkedList<News> loadNewsOffline(){
         List<News> queryNews=null;
         if(name=="首页"){
             queryNews=News.listAll(News.class);
@@ -138,30 +131,14 @@ public class MsgContentFragment extends Fragment {
         else{
             queryNews=News.findWithQuery(News.class,"Select * from News where category = ?",name);
         }
-        for(News news:queryNews){
-            Map<String,Object> item=new HashMap<String,Object>();
-            item.put("title",news.getTitle());
-            item.put("category",news.getCategory());
-            String tmpContent=news.getContent();
-            String tmpPreview=null;
-            if(tmpContent.length()<50)
-                tmpPreview=tmpContent;
-            else
-                tmpPreview=tmpContent.substring(0,50)+"...";
-            item.put("content",tmpContent);
-            item.put("preview",tmpPreview);
-            item.put("imagePath",news.getImgPath());
-            item.put("newsID",news.getNewsID());
-            listItem.add(item);
-        }
-        if(listItem.size()==0)
+        if(queryNews.size()==0)
             return null;
         else
-            return listItem;
+            return (LinkedList<News>) queryNews;
     }
 
-    private List<Map<String,Object>> loadNews(){
-        List<Map<String,Object>> listItem=null;
+    private List<News> loadNews(){
+        List<News> listItem=null;
         listItem=loadNewsOffline();
         if(listItem==null)
             return loadNewsOnline();
@@ -174,9 +151,10 @@ public class MsgContentFragment extends Fragment {
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_msg_content, container, false);
         ButterKnife.bind(this, view);
-        final List<Map<String,Object>> newsList=loadNewsOnline();//loadNews(); 调试网络接口时先不使用本地存储功能
-        SimpleAdapter myAdapter = new SimpleAdapter(getContext(), newsList, R.layout.news_item, new String[]{"title", "category", "preview","imagePath"}, new int[]{R.id.news_title, R.id.news_category, R.id.news_preview,R.id.news_img});
-        myAdapter.setViewBinder(new SimpleAdapter.ViewBinder() {
+        final LinkedList<News> newsList=loadNewsOnline();//loadNews(); 调试网络接口时先不使用本地存储功能
+        //SimpleAdapter myAdapter = new SimpleAdapter(getContext(), newsList, R.layout.news_item, new String[]{"title", "category", "preview","imagePath"}, new int[]{R.id.news_title, R.id.news_category, R.id.news_preview,R.id.news_img});
+        // 为了实现多种预览方式，不使用SimpleAdapter
+        /*myAdapter.setViewBinder(new SimpleAdapter.ViewBinder() {
             @Override
             public boolean setViewValue(View view, Object data, String s) {
                 if(view instanceof ImageView && data instanceof String){
@@ -195,17 +173,18 @@ public class MsgContentFragment extends Fragment {
                 }
                 return false;
             }
-        });
-        tvContent.setAdapter(myAdapter);
+        });*/
+        mAdapter=new NewsPreviewAdapter(getContext(),newsList);
+        tvContent.setAdapter(mAdapter);
         tvContent.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
                 Bundle bundle=new Bundle();
-                bundle.putString("title",(String)newsList.get(i-1).get("title"));
-                bundle.putString("category",(String)newsList.get(i-1).get("category"));
-                bundle.putString("content",(String)newsList.get(i-1).get("content"));
-                bundle.putString("imagePath",(String)newsList.get(i-1).get("imagePath"));
-                bundle.putString("newsID",(String)newsList.get(i-1).get("newsID"));
+                bundle.putString("title",(String)newsList.get(i-1).getTitle());
+                bundle.putString("category",(String)newsList.get(i-1).getCategory());
+                bundle.putString("content",(String)newsList.get(i-1).getContent());
+                bundle.putString("imagePath",(String)newsList.get(i-1).getImgPath());
+                bundle.putString("newsID",(String)newsList.get(i-1).getNewsID());
                 Intent intent=new Intent();
                 intent.putExtras(bundle);
                 intent.setClass(getActivity(), NewsDetail.class);
