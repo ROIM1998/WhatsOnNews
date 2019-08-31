@@ -185,7 +185,7 @@ public class MsgContentFragment extends Fragment {
                     try{
                         data_new=data.toString().split(";")[0];
                         System.out.println("需要访问的URL为："+data_new);
-                    }catch(Exception e){;data="";}
+                    }catch(Exception e){data="";}
                     Glide.with(getContext())
                             .load(data_new)
                             .placeholder(R.drawable.ic_launcher_background)
